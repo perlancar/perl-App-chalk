@@ -49,6 +49,9 @@ sub parse_styles {
 
 require Win32::Console::ANSI if $^O eq 'MSWin32';
 
+my $in_interactive  = (-t STDIN);
+my $out_interactive = (-t STDOUT);
+
 if (grep {$_ eq '--help'} @ARGV) {
     print <<'EOF';
 chalk - Colorize text for terminal output
@@ -62,19 +65,24 @@ Example:
 
 EOF
     exit 0;
-} elsif (-t STDIN) {
+} elsif ($in_interactive) {
     die "Input required\n" unless @ARGV >= 2;
     my $string = pop @ARGV;
     my $ansi = parse_styles(@ARGV);
-    print $ansi if (-t STDOUT);
-    print $string, "\n";
-    print $CODES{reset} if (-t STDOUT);
+    print $ansi         if $out_interactive;
+    print $string;
+    print $CODES{reset} if $out_interactive;
+    print "\n";
 } else {
     die "Input required\n" unless @ARGV >= 1;
     my $ansi = parse_styles(@ARGV);
-    print $ansi if (-t STDOUT);
-    print while <STDIN>;
-    print $CODES{reset};
+    while (<STDIN>) {
+        chomp;
+        print $ansi         if $out_interactive;
+        print;
+        print $CODES{reset} if $out_interactive;
+        print "\n";
+    }
 }
 
 1;
