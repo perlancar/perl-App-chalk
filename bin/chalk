@@ -92,10 +92,6 @@ Example:
 
  % chalk red bold 'Unicorns & Rainbows'
 
-or:
-
- % command-that-produce-some-text | chalk red bold
-
 
 =head1 DESCRIPTION
 
