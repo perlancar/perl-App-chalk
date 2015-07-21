@@ -1,0 +1,50 @@
+#!perl
+
+# DATE
+# VERSION
+
+use 5.010001;
+use strict;
+use warnings;
+
+use Benchmark::Command;
+use FindBin '$Bin';
+
+my $node_chalk;
+{
+    require File::Slurper;
+    require File::Which;
+    for (File::Which::which('chalk')) {
+        my $content = File::Slurper::read_text($_);
+        if ($content =~ /process\.stdin/) {
+            $node_chalk = $_;
+            last;
+        }
+    }
+    die "Can't find node's chalk" unless $node_chalk;
+}
+
+Benchmark::Command::run(
+    undef,
+    {
+        'perl (--help)' => [$^X, "$Bin/../bin/chalk", "--", "--help"],
+        'node (--help)' => [$node_chalk, "--help"],
+    },
+    {
+        quiet => 1,
+    },
+);
+
+# ABSTRACT: Benchmark startup time of node.js's chalk vs perl's
+# PODNAME:
+
+=head1 SYNOPSIS
+
+ % bench-startup-chalks
+
+Sample output:
+
+# COMMAND: perl -Ilib devscripts/bench-startup-chalks
+
+
+=head1 SEE ALSO
