@@ -79,6 +79,7 @@ EOF
 
 1;
 # ABSTRACT: Colorize text for terminal output
+# PODNAME: chalk
 
 =head1 SYNOPSIS
 
