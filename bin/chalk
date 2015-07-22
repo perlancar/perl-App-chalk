@@ -51,6 +51,9 @@ require Win32::Console::ANSI if $^O eq 'MSWin32';
 
 my $in_interactive  = (-t STDIN);
 my $out_interactive = (-t STDOUT);
+my $supports_color  = $ENV{FORCE_COLOR} ? 1 :
+    defined($ENV{COLOR}) ? $ENV{COLOR} :
+    $out_interactive;
 
 if (grep {$_ eq '--help'} @ARGV) {
     print <<'EOF';
@@ -69,18 +72,18 @@ EOF
     die "Input required\n" unless @ARGV >= 2;
     my $string = pop @ARGV;
     my $ansi = parse_styles(@ARGV);
-    print $ansi         if $out_interactive;
+    print $ansi         if $supports_color;
     print $string;
-    print $CODES{reset} if $out_interactive;
+    print $CODES{reset} if $supports_color;
     print "\n";
 } else {
     die "Input required\n" unless @ARGV >= 1;
     my $ansi = parse_styles(@ARGV);
     while (<STDIN>) {
         chomp;
-        print $ansi         if $out_interactive;
+        print $ansi         if $supports_color;
         print;
-        print $CODES{reset} if $out_interactive;
+        print $CODES{reset} if $supports_color;
         print "\n";
     }
 }
@@ -149,6 +152,17 @@ Background colors:
 =head2 What about the library version of chalk?
 
 We already have L<Term::ANSIColor> in Perl. Use that.
+
+
+=head1 ENVIRONMENT
+
+=head2 COLOR => bool
+
+Can be set to 0 or 1 to always disable or always enable color.
+
+=head2 FORCE_COLOR => bool
+
+Can be set to 1 to always enable color.
 
 
 =head1 SEE ALSO
