@@ -1,5 +1,10 @@
 Revision history for App-chalk
 
+0.04    2015-07-22 (PERLANCAR)
+
+	- Observe envs COLOR & FORCE_COLOR (like in node's version).
+
+
 0.03    2015-07-22 (PERLANCAR)
 
         - No functional changes.
